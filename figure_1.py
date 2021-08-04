@@ -649,7 +649,7 @@ def main():
     plot_fig_1j(fig=h_fig, axis=axes_dict['j'])
     plot_fig_1k(fig=h_fig, axis=axes_dict['k'])
 
-    h_fig.savefig(f'{save_dir}/figure_1.pdf')
+    h_fig.savefig(str(save_dir / "figure_1.pdf"))
     plt.show()
 
 

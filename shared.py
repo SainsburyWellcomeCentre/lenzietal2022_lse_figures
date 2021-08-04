@@ -13,7 +13,7 @@ from looming_spots.constants import FIGURE_DIRECTORY
 
 
 date_str = datetime.now().strftime('%Y%m%d')
-save_dir = os.path.join(FIGURE_DIRECTORY, date_str)
+save_dir = FIGURE_DIRECTORY / date_str
 
 mm_per_point = 0.352778
 inches_per_mm = 0.0393701

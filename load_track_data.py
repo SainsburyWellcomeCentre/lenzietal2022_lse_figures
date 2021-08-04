@@ -1,12 +1,6 @@
 import pandas as pd
 
 from looming_spots.db import loom_trial_group, experimental_log
-from looming_spots.constants import ARENA_SIZE_CM, FRAME_RATE
-from looming_spots.trial_group_analysis import escape_metric_dataframes
-
-from shared import pad_track, n_points, get_loom_number_from_latency, is_track_a_freeze
-
-get_df = escape_metric_dataframes.get_behaviour_metrics_dataframe
 
 
 experimental_groups = ['ih_ivc_7day',

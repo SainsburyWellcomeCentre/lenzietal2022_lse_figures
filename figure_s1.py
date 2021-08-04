@@ -188,7 +188,7 @@ def main():
     plot_fig_s1b_and_s1c(speed_lists, stats_s1b, 'speed', fig=h_fig, axis=axes_dict['b'])
     plot_fig_s1b_and_s1c(robustness_lists, stats_s1c, 'robustness', fig=h_fig, axis=axes_dict['c'])
 
-    h_fig.savefig(f'{save_dir}\\supplementary_figure_1.pdf')
+    h_fig.savefig(str(save_dir / "supplementary_figure_1.pdf"))
     plt.show()
 
 

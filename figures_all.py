@@ -8,7 +8,7 @@ import figure_s1
 from shared import save_dir
 
 if not os.path.isdir(save_dir):
-    os.mkdir(save_dir)
+    os.makedirs(save_dir)
 
 figure_1.main()
 figure_2.main()

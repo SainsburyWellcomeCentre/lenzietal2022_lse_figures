@@ -478,7 +478,7 @@ def main():
 
     # print_stats_fig_2(data)
 
-    h_fig.savefig(f'{save_dir}\\figure_2.pdf')
+    h_fig.savefig(str(save_dir / "figure_2.pdf"))
 
     plt.show()
 
