@@ -4,7 +4,7 @@ import pathlib
 import pandas
 import numpy
 
-from looming_spots.db.constants import N_LOOMS_PER_STIMULUS
+from looming_spots.constants import N_LOOMS_PER_STIMULUS
 
 from scipy.signal import medfilt
 from path_config import proc_path

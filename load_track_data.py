@@ -1,7 +1,7 @@
 import pandas as pd
 
 from looming_spots.db import loom_trial_group, experimental_log
-from looming_spots.db.constants import ARENA_SIZE_CM, FRAME_RATE
+from looming_spots.constants import ARENA_SIZE_CM, FRAME_RATE
 from looming_spots.trial_group_analysis import escape_metric_dataframes
 
 from shared import pad_track, n_points, get_loom_number_from_latency, is_track_a_freeze
@@ -238,6 +238,7 @@ test_type = {'ih_ivc_7day': 'pre_test',
 # get data
 dataframe = {k: pd.DataFrame() for k in experimental_groups}
 
+
 for group_id in experimental_groups:
     for mouse_id in mouse_ids[group_id]:
 
@@ -252,23 +253,7 @@ for group_id in experimental_groups:
             these_trials = trial_group.post_test_trials()[0:3]
 
         for trial in these_trials:
-
-            track = pad_track(ARENA_SIZE_CM * trial.normalised_x_track[0:n_points])
-            unsmoothed_speed = pad_track(FRAME_RATE * ARENA_SIZE_CM * trial.normalised_x_speed[0:n_points])
-            smoothed_speed = pad_track(FRAME_RATE * ARENA_SIZE_CM * trial.smoothed_x_speed[0:n_points])
-
-            add_dict = {'group_id': group_id,
-                        'mouse_id': mouse_id,
-                        'track': [track],
-                        'speed': [smoothed_speed],
-                        'peak_speed': trial.peak_speed(),
-                        'is_flee': trial.is_flee(),
-                        'latency': trial.latency_peak_detect_s(),
-                        'last_loom': get_loom_number_from_latency(trial.latency_peak_detect_s()),
-                        'is_freeze': is_track_a_freeze(unsmoothed_speed),  # unsmoothed speed
-                        'time_to_shelter': trial.time_to_reach_shelter_stim_onset()}
-
-            dataframe[group_id] = dataframe[group_id].append(pd.DataFrame.from_dict(add_dict), ignore_index=True)
+            dataframe[group_id] = dataframe[group_id].append(trial.to_df(group_id), ignore_index=True)
 
 
 longitudinal_lsie_exp_keys = {0: ['control_habituation',

@@ -4,18 +4,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from datetime import datetime
+
+from looming_spots.analyse.escape_classification import is_track_a_freeze
 from scipy.ndimage import gaussian_filter
 
-from looming_spots.db.constants import LOOM_ONSETS, \
+from looming_spots.constants import LOOM_ONSETS, \
     LOOMING_STIMULUS_ONSET, \
     CLASSIFICATION_WINDOW_END, \
     ARENA_SIZE_CM, \
     CLASSIFICATION_LATENCY, \
-    FRAME_RATE
+    FRAME_RATE, FREEZE_BUFFER_FRAMES, LOOM_ONSETS_S
 
 from path_config import figure_path
 
-FREEZE_BUFFER_FRAMES = 12  # number of frames after loom onset to ignore in classifying freeze
 
 date_str = datetime.now().strftime('%Y%m%d')
 save_dir = os.path.join(figure_path, date_str)
@@ -26,7 +27,6 @@ a4_size = (8.27, 11.69)
 
 default_dash_size = [5.6, 5.6]
 
-loom_onsets_s = [(s - 200.0) / 30 for s in LOOM_ONSETS]
 shelter_size = 10
 
 default_colors = {'shelter': [234/255.0, 228/255.0, 198/255.0],
@@ -51,11 +51,6 @@ time_after_return_to_show = 0.5
 def create_save_dir():
     if os.path.isdir(save_dir):
         os.mkdir(save_dir)
-
-
-def pad_track(this_track):
-    this_track = np.pad(this_track, (0, n_points - len(this_track)), 'constant', constant_values=(0, np.nan))
-    return this_track
 
 
 def add_figure_labels(h_fig, labels):
@@ -153,7 +148,7 @@ def format_track_axis(ax):
                      facecolor=default_colors['shelter'], edgecolor=default_colors['shelter'])
 
     # loom onsets
-    for loom in loom_onsets_s:
+    for loom in LOOM_ONSETS_S:
         plt.plot([loom, loom], [0, ARENA_SIZE_CM], 'k', dashes=default_dash_size, linewidth=0.5)
 
     plt.ylabel('Position along\narena (cm)')
@@ -279,23 +274,6 @@ def track_plot_data(dataframe):
     return t, tracks, linestyle
 
 
-def is_track_a_freeze(speed):
-
-    upper_percentile = 97.5
-    lower_percentile = 2.5
-    freeze_metric_threshold = 2.5
-
-    onset = LOOMING_STIMULUS_ONSET + FREEZE_BUFFER_FRAMES
-
-    freeze_metric = \
-        np.percentile(speed[onset:CLASSIFICATION_WINDOW_END], upper_percentile) - \
-        np.percentile(speed[onset:CLASSIFICATION_WINDOW_END], lower_percentile)
-
-    is_freeze = freeze_metric < freeze_metric_threshold
-
-    return is_freeze
-
-
 def plot_tracks_general(t, tracks, linestyle, fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
@@ -324,17 +302,6 @@ def speed_average_from_tracks(tracks):
     speed_std = np.nanstd(speeds, axis=0)
 
     return speed_avg, speed_std
-
-
-def get_loom_number_from_latency(latency):
-
-    if latency is None:
-        return np.nan
-
-    dt = latency - loom_onsets_s
-    idx = np.where(dt < 0)[0]
-    loom_idx = idx[0] if len(idx) > 0 else 5
-    return loom_idx
 
 
 def nice_p_string(p_val):

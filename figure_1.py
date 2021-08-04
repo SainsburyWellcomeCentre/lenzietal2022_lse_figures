@@ -31,7 +31,7 @@ import load_track_data as data
 def fig_1c_data(mouse_id='CA281_1', trial_n=0):
 
     group = loom_trial_group.MouseLoomTrialGroup(mouse_id)
-    track = group.pre_test_trials()[trial_n].normalised_x_track[0:n_points]
+    track = group.pre_test_trials()[trial_n].track.normalised_x_track[0:n_points]
 
     t = track_timebase[timebase_to_show]
     track = ARENA_SIZE_CM * track[timebase_to_show]
@@ -649,7 +649,7 @@ def main():
     plot_fig_1j(fig=h_fig, axis=axes_dict['j'])
     plot_fig_1k(fig=h_fig, axis=axes_dict['k'])
 
-    h_fig.savefig(f'{save_dir}\\figure_1.pdf')
+    h_fig.savefig(f'{save_dir}/figure_1.pdf')
     plt.show()
 
 
