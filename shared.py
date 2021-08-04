@@ -5,15 +5,11 @@ import numpy as np
 
 from datetime import datetime
 
-from looming_spots.analyse.escape_classification import is_track_a_freeze
 from scipy.ndimage import gaussian_filter
 
-from looming_spots.constants import LOOM_ONSETS, \
-    LOOMING_STIMULUS_ONSET, \
-    CLASSIFICATION_WINDOW_END, \
-    ARENA_SIZE_CM, \
+from looming_spots.constants import ARENA_SIZE_CM, \
     CLASSIFICATION_LATENCY, \
-    FRAME_RATE, FREEZE_BUFFER_FRAMES, LOOM_ONSETS_S
+    FRAME_RATE, LOOM_ONSETS_S
 
 from path_config import figure_path
 
