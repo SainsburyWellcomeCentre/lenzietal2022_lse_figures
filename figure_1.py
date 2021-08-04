@@ -1,6 +1,7 @@
 import matplotlib as mpl
 import numpy as np
 import matplotlib.pyplot as plt
+from looming_spots.constants import TRACK_LENGTH
 
 from scipy.stats import fisher_exact, ranksums, iqr
 
@@ -17,7 +18,6 @@ from shared import a4figure, \
     robustness_of_mouse, \
     track_timebase, \
     timebase_to_show, \
-    n_points, \
     track_plot_data, \
     plot_tracks_general, \
     ARENA_SIZE_CM, \
@@ -31,7 +31,7 @@ import load_track_data as data
 def fig_1c_data(mouse_id='CA281_1', trial_n=0):
 
     group = loom_trial_group.MouseLoomTrialGroup(mouse_id)
-    track = group.pre_test_trials()[trial_n].track.normalised_x_track[0:n_points]
+    track = group.pre_test_trials()[trial_n].track.normalised_x_track[0:TRACK_LENGTH]
 
     t = track_timebase[timebase_to_show]
     track = ARENA_SIZE_CM * track[timebase_to_show]
