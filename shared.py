@@ -7,7 +7,7 @@ from datetime import datetime
 
 from looming_spots.constants import ARENA_SIZE_CM, \
     CLASSIFICATION_LATENCY, \
-    LOOM_ONSETS_S, SHELTER_SIZE_CM
+    LOOM_ONSETS_S, SHELTER_SIZE_CM, TRACK_LENGTH
 
 from looming_spots.constants import FIGURE_DIRECTORY
 
@@ -33,9 +33,8 @@ default_colors = {'shelter': [234/255.0, 228/255.0, 198/255.0],
                   'pre_test_24hr': [128/255.0, 176/255.0, 211/255.0],
                   'pre_test_immediate': [248/255.0, 179/255.0, 102/255.0]}
 
-n_points = 600
 track_display_limits = [-2, 6.5]
-track_timebase = (np.arange(n_points) - 200) / 30
+track_timebase = (np.arange(TRACK_LENGTH) - 200) / 30
 timebase_to_show = np.logical_and(track_timebase > track_display_limits[0], track_timebase < track_display_limits[1])
 time_after_return_to_show = 0.5
 
