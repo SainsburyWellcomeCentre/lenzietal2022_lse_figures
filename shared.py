@@ -285,21 +285,6 @@ def plot_tracks_general(t, tracks, linestyle, fig=None, axis=None):
             plt.plot(t[i], track, color=default_colors['flee'], linewidth=0.8, alpha=0.5)
 
 
-def speed_average_from_tracks(tracks):
-
-    speeds = []
-    for track in tracks:
-        smooth_track = gaussian_filter(ARENA_SIZE_CM * track, 2)
-        if len(smooth_track) > 0:
-            this_speed = -np.diff(smooth_track) * FRAME_RATE
-            speeds.append(np.insert(this_speed, 0, this_speed[0], axis=0))
-
-    speed_avg = np.nanmean(speeds, axis=0)
-    speed_std = np.nanstd(speeds, axis=0)
-
-    return speed_avg, speed_std
-
-
 def nice_p_string(p_val):
 
     if p_val > 0.0095:
