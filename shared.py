@@ -5,11 +5,9 @@ import numpy as np
 
 from datetime import datetime
 
-from scipy.ndimage import gaussian_filter
-
 from looming_spots.constants import ARENA_SIZE_CM, \
     CLASSIFICATION_LATENCY, \
-    FRAME_RATE, LOOM_ONSETS_S
+    LOOM_ONSETS_S
 
 from path_config import figure_path
 
