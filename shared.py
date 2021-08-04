@@ -7,21 +7,19 @@ from datetime import datetime
 
 from looming_spots.constants import ARENA_SIZE_CM, \
     CLASSIFICATION_LATENCY, \
-    LOOM_ONSETS_S
+    LOOM_ONSETS_S, SHELTER_SIZE_CM
 
-from path_config import figure_path
+from looming_spots.constants import FIGURE_DIRECTORY
 
 
 date_str = datetime.now().strftime('%Y%m%d')
-save_dir = os.path.join(figure_path, date_str)
+save_dir = os.path.join(FIGURE_DIRECTORY, date_str)
 
 mm_per_point = 0.352778
 inches_per_mm = 0.0393701
 a4_size = (8.27, 11.69)
 
 default_dash_size = [5.6, 5.6]
-
-shelter_size = 10
 
 default_colors = {'shelter': [234/255.0, 228/255.0, 198/255.0],
                   'flee': [0/255.0, 0/255.0, 0/255.0],
@@ -138,7 +136,7 @@ def format_track_axis(ax):
     format_general_axis(ax)
 
     # shelter location
-    plt.fill_between(track_display_limits, [0, 0], 2 * [shelter_size],
+    plt.fill_between(track_display_limits, [0, 0], 2 * [SHELTER_SIZE_CM],
                      facecolor=default_colors['shelter'], edgecolor=default_colors['shelter'])
 
     # loom onsets

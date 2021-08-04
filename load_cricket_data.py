@@ -4,7 +4,7 @@ import numpy as np
 import more_itertools as mit
 import skimage
 
-from path_config import df_path, proc_path, transformed_df_path
+from looming_spots.constants import DF_PATH, PROCESSED_DATA_DIRECTORY, TRANSFORMED_DF_PATH
 
 HOUSE_START = 0.3  # 0.3
 DISTANCE_THRESHOLD = 0.2
@@ -28,8 +28,8 @@ ids = {'naive': ['1114171_20210410_12_52_20',
 
 keys = ['naive', 'lsie']
 
-paths = {'naive': [os.path.join(df_path, x + '.h5') for x in ids['naive']],
-         'lsie': [os.path.join(df_path, x + '.h5') for x in ids['lsie']]}
+paths = {'naive': [os.path.join(DF_PATH, x + '.h5') for x in ids['naive']],
+         'lsie': [os.path.join(DF_PATH, x + '.h5') for x in ids['lsie']]}
 
 body_tracks = dict.fromkeys(keys)
 cricket_tracks = dict.fromkeys(keys)
@@ -42,7 +42,7 @@ event_times_flattened = dict.fromkeys(keys)
 
 def transform_raw_tracks(mid, x_in, y_in):
 
-    f_name = os.path.join(proc_path, mid[0:7], mid[8:], 'box_corner_coordinates.npy')
+    f_name = os.path.join(PROCESSED_DATA_DIRECTORY, mid[0:7], mid[8:], 'box_corner_coordinates.npy')
     napari_fmt_coords = np.load(f_name)
     napari_fmt_coords = np.roll(napari_fmt_coords, 1, axis=1)
     new_box_coords = np.empty_like(napari_fmt_coords)
@@ -85,14 +85,14 @@ for group_id in paths:
 
             HOUSE_START = 0.2
             dlc_padding = 40
-            if not os.path.isdir(transformed_df_path):
+            if not os.path.isdir(TRANSFORMED_DF_PATH):
                 x_body, y_body = transform_raw_tracks(ids[group_id][i], df['body']['x'] + dlc_padding, df['body']['y']+ dlc_padding)
                 x_cricket, y_cricket = transform_raw_tracks(ids[group_id][i], df['cricket']['x']+ dlc_padding, df['cricket']['y']+ dlc_padding)
             else:
-                x_body = np.load(os.path.join(transformed_df_path, ids[group_id][i], 'x_body.npy'))
-                y_body = np.load(os.path.join(transformed_df_path, ids[group_id][i], 'y_body.npy'))
-                x_cricket = np.load(os.path.join(transformed_df_path, ids[group_id][i], 'x_cricket.npy'))
-                y_cricket = np.load(os.path.join(transformed_df_path, ids[group_id][i], 'y_cricket.npy'))
+                x_body = np.load(os.path.join(TRANSFORMED_DF_PATH, ids[group_id][i], 'x_body.npy'))
+                y_body = np.load(os.path.join(TRANSFORMED_DF_PATH, ids[group_id][i], 'y_body.npy'))
+                x_cricket = np.load(os.path.join(TRANSFORMED_DF_PATH, ids[group_id][i], 'x_cricket.npy'))
+                y_cricket = np.load(os.path.join(TRANSFORMED_DF_PATH, ids[group_id][i], 'y_cricket.npy'))
 
         body = np.array([1 - (x_body / 600.0), (1 - (y_body / 240.0)) * 0.4])
         cricket = np.array([1 - (x_cricket / 600.0), (1 - (y_cricket / 240.0)) * 0.4])

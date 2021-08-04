@@ -4,10 +4,9 @@ import pathlib
 import pandas
 import numpy
 
-from looming_spots.constants import N_LOOMS_PER_STIMULUS
+from looming_spots.constants import N_LOOMS_PER_STIMULUS, PROCESSED_DATA_DIRECTORY
 
 from scipy.signal import medfilt
-from path_config import proc_path
 
 import load_track_data as data
 
@@ -46,14 +45,14 @@ zero_frame_idx = numpy.where(timebase == 0)[0][0]
 
 
 def track_h5_f_name(_mouse_id, datetime_id):
-    d_name = os.path.join(proc_path, _mouse_id, datetime_id, '5_label')
+    d_name = os.path.join(PROCESSED_DATA_DIRECTORY, _mouse_id, datetime_id, '5_label')
     path = pathlib.Path(d_name)
     f_name = str(list(path.glob('*filtered.h5'))[0])
     return f_name
 
 
 def loom_starts_npy(_mouse_id, datetime_id):
-    f_name = os.path.join(proc_path, _mouse_id, datetime_id, 'loom_starts.npy')
+    f_name = os.path.join(PROCESSED_DATA_DIRECTORY, _mouse_id, datetime_id, 'loom_starts.npy')
     return f_name
 
 
