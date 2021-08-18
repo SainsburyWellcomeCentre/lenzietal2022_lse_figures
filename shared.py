@@ -199,37 +199,39 @@ def format_general_axis(ax):
         item.set_fontsize(8)
 
 
-def x_axis_spots(ax, y_limits):
+def x_axis_spots(ax, y_limits, n_spots=5, ramp=False):
 
     plt.sca(ax)
-
-    n_spots = 5
 
     plt.xticks([])
 
     y_offset = y_limits[0] - (y_limits[1] - y_limits[0]) / 6
     y_offset2 = y_limits[0] - 2 * (y_limits[1] - y_limits[0]) / 6
 
-    [
-        plt.scatter(
-            x, y_offset, s=scatterball_size(3), facecolor="k", clip_on=False
-        )
-        for x in range(n_spots)
-    ]
+    facecolors = ['whitesmoke', 'gainsboro', 'lightgrey', 'silver', 'darkgrey', 'grey', 'dimgrey', 'k']
+    spot_colors = facecolors if ramp else ['k']*n_spots
+
 
     [
-        ax.text(
-            x,
-            y_offset,
-            str(x + 1),
-            color="w",
-            horizontalalignment="center",
-            verticalalignment="center",
-            fontsize=8,
-            fontweight="bold",
+        plt.scatter(
+            x, y_offset, s=scatterball_size(3), facecolor=spot_colors[i], clip_on=False
         )
-        for x in range(n_spots)
+        for i, x in enumerate(range(n_spots))
     ]
+    if not ramp:
+        [
+            ax.text(
+                x,
+                y_offset,
+                str(x + 1),
+                color="w",
+                horizontalalignment="center",
+                verticalalignment="center",
+                fontsize=8,
+                fontweight="bold",
+            )
+            for x in range(n_spots)
+        ]
 
     ax.text(
         (n_spots - 1) / 2,
