@@ -479,7 +479,7 @@ def main():
     plot_fig_2e(fig=h_fig, axis=axes_dict['e'])
     plot_fig_2f(fig=h_fig, axis=axes_dict['f'])
 
-    print_stats()
+    # print_stats()
 
     h_fig.savefig(str(save_dir / "figure_2.pdf"))
 
