@@ -65,6 +65,24 @@ def plot_fig_3b(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
+    n_flees, total_n_trials, p_val = fig_3d_data()
+
+    colors = [default_colors['ih_ivc_7day'], default_colors['lsie']]
+
+    plot_fig_3_bars(ax, n_flees, total_n_trials, p_val, colors, bars_empty=True)
+
+    plt.ylabel('Auditory Threat-evoked\nEscape Probability (%)', color='k', fontsize=9)
+
+    ax.text(0, -10, 'Naive', color=default_colors['ih_ivc_7day'],
+            horizontalalignment='center', verticalalignment='top', fontsize=9, rotation=60)
+    ax.text(1, -10, 'LSIE', color=default_colors['lsie'],
+            horizontalalignment='center', verticalalignment='top', fontsize=9, rotation=60)
+
+
+def plot_fig_3d(fig=None, axis=None):
+
+    ax, _ = create_panel_if_needed(fig, axis)
+
     n_flees, total_n_trials, p_val = fig_3b_data()
 
     colors = [default_colors['pre_test_immediate'], default_colors['pre_test_24hr']]
@@ -81,7 +99,7 @@ def plot_fig_3b(fig=None, axis=None):
             horizontalalignment='center', verticalalignment='top', fontsize=9, rotation=60)
 
 
-def plot_fig_3c(fig=None, axis=None):
+def plot_fig_3e(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
@@ -98,24 +116,6 @@ def plot_fig_3c(fig=None, axis=None):
     ax.text(1, -10, '> 24 hrs', color=default_colors['pre_test_24hr'],
             horizontalalignment='center', verticalalignment='top', fontsize=9, rotation=60)
     ax.text(2, -10, 'No pre-\ntest', color=default_colors['lsie'],
-            horizontalalignment='center', verticalalignment='top', fontsize=9, rotation=60)
-
-
-def plot_fig_3d(fig=None, axis=None):
-
-    ax, _ = create_panel_if_needed(fig, axis)
-
-    n_flees, total_n_trials, p_val = fig_3d_data()
-
-    colors = [default_colors['ih_ivc_7day'], default_colors['lsie']]
-
-    plot_fig_3_bars(ax, n_flees, total_n_trials, p_val, colors, bars_empty=True)
-
-    plt.ylabel('Auditory Threat-evoked\nEscape Probability (%)', color='k', fontsize=9)
-
-    ax.text(0, -10, 'Naive', color=default_colors['ih_ivc_7day'],
-            horizontalalignment='center', verticalalignment='top', fontsize=9, rotation=60)
-    ax.text(1, -10, 'LSIE', color=default_colors['lsie'],
             horizontalalignment='center', verticalalignment='top', fontsize=9, rotation=60)
 
 
@@ -185,21 +185,21 @@ def main():
 
     h_fig = a4figure()
 
-    labels = {'a': [37, 297 - 55, 0, 0],
-              'b': [37, 297 - 88, 0, 0],
-              'c': [78, 297 - 88, 0, 0],
-              'd': [134, 297 - 88, 0, 0],
-              'e': [37, 297 - 134, 0, 0]}
+    labels = {'a': [37, 297 - 73, 0, 0],
+              'b': [37, 297 - 140, 0, 0],
+              'c': [73, 297 - 140, 0, 0],
+              'd': [73, 297 - 164, 0, 0],
+              'e': [116, 297 - 164, 0, 0]}
 
-    axis_positions = {'b': [56, 297 - 111, 20, 22],
-                      'c': [99, 297 - 111, 30, 22],
-                      'd': [157, 297 - 111, 20, 22],
-                      'e_naive_tracks': [69, 297 - 190, 20, 50],
-                      'e_lsie_tracks': [92, 297 - 190, 20, 50],
-                      'e_naive_events': [130, 297 - 143, 47, 8.3333],
-                      'e_lsie_events': [130, 297 - 154, 47, 10],
-                      'e_histograms': [130, 297 - 169, 47, 12],
-                      'e_line_plots': [130, 297 - 190, 47, 16]}
+    axis_positions = {'a_naive_tracks': [59, 297 - 126, 20, 50],
+                      'a_lsie_tracks': [82, 297 - 126, 20, 50],
+                      'a_naive_events': [124, 297 - 79, 47, 8.3333],
+                      'a_lsie_events': [124, 297 - 90, 47, 10],
+                      'a_histograms': [124, 297 - 105, 47, 12],
+                      'a_line_plots': [124, 297 - 126, 47, 16],
+                      'b': [50, 297 - 189, 20, 48],
+                      'd': [92, 297 - 189, 20, 22],
+                      'e': [135, 297 - 189, 30, 22]}
 
     # add the legend labels
     add_figure_labels(h_fig, labels)
@@ -208,24 +208,24 @@ def main():
     axes_dict = add_axes(h_fig, axis_positions)
 
     # format the axes
-    for panel_id in ['b', 'c', 'd', 'e_naive_events', 'e_lsie_events', 'e_histograms', 'e_line_plots']:
+    for panel_id in ['b', 'd', 'e', 'a_naive_events', 'a_lsie_events', 'a_histograms', 'a_line_plots']:
         format_general_axis(axes_dict[panel_id])
 
+    cricket_plotting_fcns.plot_example_tracks(axes_dict['a_naive_tracks'], 'naive')
+    cricket_plotting_fcns.plot_example_tracks(axes_dict['a_lsie_tracks'], 'lsie')
+
+    cricket_plotting_fcns.plot_events(axes_dict['a_naive_events'], 'naive')
+    cricket_plotting_fcns.plot_events(axes_dict['a_lsie_events'], 'lsie')
+
+    cricket_plotting_fcns.plot_histogram(axes_dict['a_histograms'], 'naive')
+    cricket_plotting_fcns.plot_histogram(axes_dict['a_histograms'], 'lsie')
+
+    cricket_plotting_fcns.plot_lines(axes_dict['a_line_plots'], 'naive')
+    cricket_plotting_fcns.plot_lines(axes_dict['a_line_plots'], 'lsie')
+
     plot_fig_3b(fig=h_fig, axis=axes_dict['b'])
-    plot_fig_3c(fig=h_fig, axis=axes_dict['c'])
     plot_fig_3d(fig=h_fig, axis=axes_dict['d'])
-
-    cricket_plotting_fcns.plot_example_tracks(axes_dict['e_naive_tracks'], 'naive')
-    cricket_plotting_fcns.plot_example_tracks(axes_dict['e_lsie_tracks'], 'lsie')
-
-    cricket_plotting_fcns.plot_events(axes_dict['e_naive_events'], 'naive')
-    cricket_plotting_fcns.plot_events(axes_dict['e_lsie_events'], 'lsie')
-
-    cricket_plotting_fcns.plot_histogram(axes_dict['e_histograms'], 'naive')
-    cricket_plotting_fcns.plot_histogram(axes_dict['e_histograms'], 'lsie')
-
-    cricket_plotting_fcns.plot_lines(axes_dict['e_line_plots'], 'naive')
-    cricket_plotting_fcns.plot_lines(axes_dict['e_line_plots'], 'lsie')
+    plot_fig_3e(fig=h_fig, axis=axes_dict['e'])
 
     h_fig.savefig(str(save_dir / "figure_3.pdf"))
 
