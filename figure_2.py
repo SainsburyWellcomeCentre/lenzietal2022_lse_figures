@@ -2,6 +2,7 @@ import math
 import matplotlib as mpl
 import numpy as np
 import matplotlib.pyplot as plt
+from looming_spots.constants import LOOM_ONSETS_S
 from scipy.stats import wilcoxon, ranksums, fisher_exact
 
 import load_track_data as data
@@ -15,7 +16,6 @@ from shared import save_dir, \
     format_track_axis, \
     format_general_axis, \
     default_colors, \
-    loom_onsets_s, \
     scatterball_size, \
     track_plot_data, \
     plot_tracks_general, \
@@ -127,7 +127,7 @@ def plot_fig_2c(fig=None, axis=None):
     lsie_down = np.nansum((speed_avg['lsie'], -speed_std['lsie']), axis=0)
 
     yl = np.array([-60, 60])
-    for loom in loom_onsets_s:
+    for loom in LOOM_ONSETS_S:
         plt.plot([loom, loom], yl, 'k', dashes=default_dash_size, linewidth=0.5)
 
     plt.fill_between(t, ctl_down, ctl_up,
@@ -481,7 +481,7 @@ def main():
 
     print_stats()
 
-    h_fig.savefig(f'{save_dir}\\figure_2.pdf')
+    h_fig.savefig(str(save_dir / "figure_2.pdf"))
 
     plt.show()
 

@@ -227,7 +227,7 @@ def main():
     cricket_plotting_fcns.plot_lines(axes_dict['e_line_plots'], 'naive')
     cricket_plotting_fcns.plot_lines(axes_dict['e_line_plots'], 'lsie')
 
-    h_fig.savefig(f'{save_dir}\\figure_3.pdf')
+    h_fig.savefig(str(save_dir / "figure_3.pdf"))
 
     plt.show()
 
