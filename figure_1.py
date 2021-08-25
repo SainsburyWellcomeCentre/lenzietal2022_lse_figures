@@ -41,26 +41,6 @@ def fig_1c_data(mouse_id='CA281_1', trial_n=0):
 
 def fig_1e_data():
 
-    group_ids = ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth']
-
-    percentage_lists = {k: [] for k in group_ids}
-
-    for group_id in group_ids:
-
-        dataframe = data.dataframe[group_id]
-        total_n_trials = dataframe.shape[0]
-
-        for i in range(1, 6):
-            fraction_on_this_loom = sum(dataframe['last_loom'] == i)/total_n_trials
-            percentage_lists[group_id].append(100 * fraction_on_this_loom)
-
-        percentage_lists[group_id].append(100 * (total_n_trials - sum(dataframe['is_flee'])) / total_n_trials)
-
-    return percentage_lists
-
-
-def fig_1f_data():
-
     group_ids = ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth', 'ih_ivc_7day']
     n_groups = len(group_ids)
 
@@ -296,47 +276,7 @@ def plot_fig_1e(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
-    percentage_list = fig_1e_data()
-
-    x_limits = [-0.5, 7.5]
-    y_limits = [0, 100]
-    y_tick_spacing = 20
-
-    for i, group_id in enumerate(percentage_list):
-        x = np.arange(len(percentage_list[group_id][:-1])) - 0.2 + i * 0.2
-        plt.bar(x, percentage_list[group_id][:-1], width=0.2, facecolor=default_colors[group_id], edgecolor='none')
-        plt.bar(len(percentage_list[group_id]) - 0.2 + i * 0.2, percentage_list[group_id][-1],
-                width=0.2, facecolor=default_colors[group_id], edgecolor='none')
-
-    ax.spines['bottom'].set_visible(False)
-    plt.ylabel('% Escape Trials')
-
-    plt.ylim(y_limits)
-    plt.yticks(np.arange(y_limits[0], y_limits[1] + 1, y_tick_spacing))
-    plt.xlim(x_limits)
-
-    y_offset = x_axis_spots(ax, y_limits)
-
-    ax.text(6, y_offset, 'No\nescape',
-            horizontalalignment='center', verticalalignment='top', fontsize=8)
-
-    # legend
-    plt.fill([1, 1.7, 1.7, 1], [70, 70, 74, 74], color=default_colors['ih_ivc_1mth'])
-    plt.fill([1, 1.7, 1.7, 1], [80, 80, 84, 84], color=default_colors['ih_enriched'])
-    plt.fill([1, 1.7, 1.7, 1], [90, 90, 94, 94], color=default_colors['gh_enriched'])
-    ax.text(2, 72, 'IH IVC (1 mth)', color=default_colors['ih_ivc_1mth'], fontsize=7,
-            horizontalalignment='left', verticalalignment='center')
-    ax.text(2, 82, 'IH enriched', color=default_colors['ih_enriched'], fontsize=7,
-            horizontalalignment='left', verticalalignment='center')
-    ax.text(2, 92, 'GH enriched', color=default_colors['gh_enriched'], fontsize=7,
-            horizontalalignment='left', verticalalignment='center')
-
-
-def plot_fig_1f(fig=None, axis=None):
-
-    ax, _ = create_panel_if_needed(fig, axis)
-
-    n_flees, total_n_trials, p_val = fig_1f_data()
+    n_flees, total_n_trials, p_val = fig_1e_data()
 
     colors = [default_colors[x] for x in ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth']]
     label_str = ['GH enriched', 'IH enriched', 'IH IVC']
@@ -590,7 +530,7 @@ def print_stats_fig_1g_and_h(lists, stats, axis_label):
 def print_stats():
 
     group_ids = ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth', 'ih_ivc_7day']
-    n_flees, total_n_trials, p_val = fig_1f_data()
+    n_flees, total_n_trials, p_val = fig_1e_data()
 
     print('\n\n\nESCAPE RATE\n\n\n')
     for i in range(len(n_flees)-1):
@@ -644,7 +584,7 @@ def main():
               'b': [50, 297 - 52, 0, 0],
               'c': [20, 297 - 78, 0, 0],
               'd': [20, 297 - 126, 0, 0],
-              'e': [106, 297 - 30, 0, 0],
+              'e': [108, 297 - 30, 0, 0],
               'f': [146, 297 - 30, 0, 0],
               'g': [108, 297 - 95, 0, 0],
               'h': [146, 297 - 95, 0, 0],
@@ -656,8 +596,7 @@ def main():
                       'd_upper': [37, 297 - 157, 62, 32],
                       'd_middle': [37, 297 - 207, 62, 32],
                       'd_lower': [37, 297 - 257, 62, 32],
-                      'e': [115, 297 - 67, 34, 32],
-                      'f': [162, 297 - 67, 23, 32],
+                      'e': [117, 297 - 67, 23, 32],
                       'g': [117, 297 - 130, 23, 32],
                       'h': [164, 297 - 130, 23, 32],
                       'i': [117, 297 - 188, 62, 32],
@@ -672,7 +611,7 @@ def main():
 
     # format the axes
     track_axes = ['c', 'd_upper', 'd_middle', 'd_lower', 'i']
-    normal_axes = ['e', 'f', 'g', 'h', 'j', 'k']
+    normal_axes = ['e', 'g', 'h', 'j', 'k']
     for panel_id in track_axes:
         format_track_axis(axes_dict[panel_id])
     for panel_id in normal_axes:
@@ -684,7 +623,6 @@ def main():
     plot_fig_1d_middle(fig=h_fig, axis=axes_dict['d_middle'])
     plot_fig_1d_lower(fig=h_fig, axis=axes_dict['d_lower'])
     plot_fig_1e(fig=h_fig, axis=axes_dict['e'])
-    plot_fig_1f(fig=h_fig, axis=axes_dict['f'])
     plot_fig_1g_and_h('speed', fig=h_fig, axis=axes_dict['g'])
     plot_fig_1g_and_h('robustness', fig=h_fig, axis=axes_dict['h'])
     plot_fig_1i(fig=h_fig, axis=axes_dict['i'])
