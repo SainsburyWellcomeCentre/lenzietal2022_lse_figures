@@ -146,7 +146,7 @@ def fig_1j_data():
 
 def fig_1k_data():
 
-    group_ids = ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth', 'ih_ivc_7day']
+    group_ids = ['gh_enriched', 'ih_ivc_7day']
 
     n_looms = 5
     n_groups = len(group_ids)
@@ -189,15 +189,16 @@ def fig_1k_data():
                 avg_speed[-1].append(None)
                 sem_speed[-1].append(None)
 
+    ih_ivc_7day_idx = group_ids.index('ih_ivc_7day')
     p_val = np.ones(shape=(n_groups, n_looms))
     # compare all to last group ('ih_ivc_7day')
     for i in range(n_groups-1):
         for j in range(n_looms):
             if all_speeds[i][j] is not None and all_speeds[-1][j] is not None:
                 if len(all_speeds[i][j]) > 1:
-                    [_, p_val[i, j]] = ranksums(all_speeds[i][j], all_speeds[3][j])
+                    [_, p_val[i, j]] = ranksums(all_speeds[i][j], all_speeds[ih_ivc_7day_idx][j])
 
-    return avg_speed, sem_speed, p_val
+    return avg_speed, sem_speed, p_val, group_ids
 
 
 def plot_fig_1c(fig=None, axis=None):
@@ -454,27 +455,28 @@ def plot_fig_1k(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
-    avg_speed, sem_speed, p_val = fig_1k_data()
+    avg_speed, sem_speed, p_val, group_ids = fig_1k_data()
 
     x_limits = [-0.5, 4.5]
     y_limits = [20, 80]
     y_tick_space = 10
 
-    colors = [default_colors[x] for x in ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth', 'ih_ivc_7day']]
+    colors = [default_colors[x] for x in group_ids]
 
+    ih_ivc_7day_idx = group_ids.index('ih_ivc_7day')
     for i, s in enumerate(avg_speed):
         plt.plot(range(5), s, color=colors[i], linewidth=0.5, zorder=-1)
         for j, a in enumerate(s):
             if a is not None:
                 plt.plot([j, j], [s[j] - sem_speed[i][j], s[j] + sem_speed[i][j]],
                          color=colors[i], linewidth=0.5, zorder=-1)
-        if i == 3:
+        if i == ih_ivc_7day_idx:
             plt.scatter(range(5), s, s=scatterball_size(1.8),
                         facecolors='w', edgecolors=colors[i], linewidths=0.5, zorder=1)
         else:
             plt.scatter(range(5), s, s=scatterball_size(1.2), facecolors=colors[i], linewidths=0.5)
 
-    for ii in range(3):
+    for ii in range(len(avg_speed)-1):
         for jj in range(5):
 
             if avg_speed[ii][jj] is None:
