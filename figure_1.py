@@ -23,7 +23,8 @@ from shared import a4figure, \
     ARENA_SIZE_CM, \
     nice_p_string, \
     add_figure_labels, \
-    add_axes
+    add_axes, \
+    n_flees_by_mouse
 
 import load_track_data as data
 
@@ -60,6 +61,30 @@ def fig_1e_data():
             p_val[i, j] = p
 
     return n_flees, total_n_trials, p_val
+
+
+def fig_1f_data():
+
+    group_ids = ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth']
+
+    n_trials = 3
+
+    percentage_lists = {k: np.zeros(n_trials+1) for k in group_ids}
+
+    for group_id in group_ids:
+
+        dataframe = data.dataframe[group_id]
+
+        mouse_ids = dataframe['mouse_id'].unique()
+        n_mice = len(mouse_ids)
+
+        for mouse_id in mouse_ids:
+            n_escapes, _ = n_flees_by_mouse(dataframe, mouse_id)
+            percentage_lists[group_id][n_escapes] += 1
+
+        percentage_lists[group_id] = 100 * percentage_lists[group_id] / n_mice
+
+    return percentage_lists
 
 
 def fig_1g_data():
@@ -320,6 +345,46 @@ def plot_fig_1e(fig=None, axis=None):
                     p_str = '***'
                 ax.text((i + j) / 2, 100 + (j - i) * 15, p_str, color='k', horizontalalignment='center',
                         verticalalignment='bottom', fontsize=8)
+
+
+def plot_fig_1f(fig=None, axis=None):
+
+    ax, _ = create_panel_if_needed(fig, axis)
+
+    percentage_lists = fig_1f_data()
+
+    x_limits = [-0.5, 3.5]
+    y_limits = [0, 100]
+    y_tick_spacing = 20
+
+    for i, group_id in enumerate(percentage_lists):
+        x = np.arange(len(percentage_lists[group_id][:-1])) - 0.2 + i * 0.2
+        plt.bar(x, percentage_lists[group_id][:-1], width=0.2, facecolor=default_colors[group_id], edgecolor='none')
+        plt.bar(len(percentage_lists[group_id]) - 1.2 + i * 0.2, percentage_lists[group_id][-1],
+                width=0.2, facecolor=default_colors[group_id], edgecolor='none')
+
+    ax.spines['bottom'].set_visible(False)
+    plt.ylabel('% mice')
+
+    plt.ylim(y_limits)
+    plt.yticks(np.arange(y_limits[0], y_limits[1] + 1, y_tick_spacing))
+    plt.xlim(x_limits)
+
+    plt.xticks([0, 1, 2, 3])
+    plt.xlabel('# escape trials')
+    # y_offset = x_axis_spots(ax, y_limits)
+
+    # legend
+    legend_box_x = [x - 1 for x in [1, 1.3, 1.3, 1]]
+    plt.fill(legend_box_x, [70, 70, 74, 74], color=default_colors['ih_ivc_1mth'])
+    plt.fill(legend_box_x, [80, 80, 84, 84], color=default_colors['ih_enriched'])
+    plt.fill(legend_box_x, [90, 90, 94, 94], color=default_colors['gh_enriched'])
+    ax.text(0.5, 72, 'IH IVC (1 mth)', color=default_colors['ih_ivc_1mth'], fontsize=7,
+            horizontalalignment='left', verticalalignment='center')
+    ax.text(0.5, 82, 'IH enriched', color=default_colors['ih_enriched'], fontsize=7,
+            horizontalalignment='left', verticalalignment='center')
+    ax.text(0.5, 92, 'GH enriched', color=default_colors['gh_enriched'], fontsize=7,
+            horizontalalignment='left', verticalalignment='center')
 
 
 def plot_fig_1g_and_h(axis_label, fig=None, axis=None):
@@ -624,6 +689,7 @@ def main():
                       'd_middle': [37, 297 - 207, 62, 32],
                       'd_lower': [37, 297 - 257, 62, 32],
                       'e': [117, 297 - 67, 23, 32],
+                      'f': [160, 297 - 67, 30, 32],
                       'g': [117, 297 - 130, 23, 32],
                       'h': [164, 297 - 130, 23, 32],
                       'i': [117, 297 - 188, 62, 32],
@@ -638,7 +704,7 @@ def main():
 
     # format the axes
     track_axes = ['c', 'd_upper', 'd_middle', 'd_lower', 'i']
-    normal_axes = ['e', 'g', 'h', 'j', 'k']
+    normal_axes = ['e', 'f', 'g', 'h', 'j', 'k']
     for panel_id in track_axes:
         format_track_axis(axes_dict[panel_id])
     for panel_id in normal_axes:
@@ -650,6 +716,7 @@ def main():
     plot_fig_1d_middle(fig=h_fig, axis=axes_dict['d_middle'])
     plot_fig_1d_lower(fig=h_fig, axis=axes_dict['d_lower'])
     plot_fig_1e(fig=h_fig, axis=axes_dict['e'])
+    plot_fig_1f(fig=h_fig, axis=axes_dict['f'])
     plot_fig_1g_and_h('speed', fig=h_fig, axis=axes_dict['g'])
     plot_fig_1g_and_h('robustness', fig=h_fig, axis=axes_dict['h'])
     plot_fig_1i(fig=h_fig, axis=axes_dict['i'])
