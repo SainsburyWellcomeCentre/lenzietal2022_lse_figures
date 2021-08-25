@@ -16,6 +16,19 @@ import cricket_plotting_fcns
 
 def fig_3b_data():
 
+    # these numbers have been checked but ideally we would fix this to extract from the raw data
+    n_flees = [13, 11]
+    total_n_trials = [15, 12]
+
+    p_val = np.ones(shape=(2, 2))
+    _, p_val[0, 1] = fisher_exact([[n_flees[0], n_flees[1]],
+                                   [total_n_trials[0] - n_flees[0], total_n_trials[1] - n_flees[1]]])
+
+    return n_flees, total_n_trials, p_val
+
+
+def fig_3d_data():
+
     group_ids = ['pre_test_immediate_pre', 'pre_test_24hr_pre']
     dfs = [data.dataframe[x] for x in group_ids]
 
@@ -24,25 +37,12 @@ def fig_3b_data():
     return n_flees, total_n_trials, p_val
 
 
-def fig_3c_data():
+def fig_3e_data():
 
     group_ids = ['pre_test_immediate_post', 'pre_test_24hr_post', 'pre_test_none_post']
     dfs = [data.dataframe[x] for x in group_ids]
 
     n_flees, total_n_trials, p_val = fig_3_bar_data(dfs)
-
-    return n_flees, total_n_trials, p_val
-
-
-def fig_3d_data():
-
-    # these numbers have been checked but ideally we would fix this to extract from the raw data
-    n_flees = [13, 11]
-    total_n_trials = [15, 12]
-
-    p_val = np.ones(shape=(2, 2))
-    _, p_val[0, 1] = fisher_exact([[n_flees[0], n_flees[1]],
-                                   [total_n_trials[0] - n_flees[0], total_n_trials[1] - n_flees[1]]])
 
     return n_flees, total_n_trials, p_val
 
@@ -65,7 +65,7 @@ def plot_fig_3b(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
-    n_flees, total_n_trials, p_val = fig_3d_data()
+    n_flees, total_n_trials, p_val = fig_3b_data()
 
     colors = [default_colors['ih_ivc_7day'], default_colors['lsie']]
 
@@ -83,7 +83,7 @@ def plot_fig_3d(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
-    n_flees, total_n_trials, p_val = fig_3b_data()
+    n_flees, total_n_trials, p_val = fig_3d_data()
 
     colors = [default_colors['pre_test_immediate'], default_colors['pre_test_24hr']]
 
@@ -103,7 +103,7 @@ def plot_fig_3e(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
-    n_flees, total_n_trials, p_val = fig_3c_data()
+    n_flees, total_n_trials, p_val = fig_3e_data()
     colors = [default_colors['pre_test_immediate'], default_colors['pre_test_24hr'], default_colors['lsie']]
 
     plot_fig_3_bars(ax, n_flees, total_n_trials, p_val, colors, bars_empty=True)
