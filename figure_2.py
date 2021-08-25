@@ -78,19 +78,24 @@ def fig_2f_data():
     t = [7,  24 * 60, 72 * 60, 7 * 24 * 60, 8 * 24 * 60, 14 * 24 * 60]
 
     percentage_list = []
+    n_non_flees = []
+    total_n_trials = []
     n_mice = []
 
-    for key, val in data.longitudinal_lsie_ids.items():
-        idx = [np.any(a in val) for a in data.dataframe['lsie']['mouse_id']]
+    for key, mouse_ids in data.longitudinal_lsie_ids.items():
+        df_ids = data.dataframe['lsie']['mouse_id']
+        idx = [np.any(a in mouse_ids) for a in df_ids]
         flees = data.dataframe['lsie']['is_flee'][idx]
+        n_non_flees.append(sum(idx) - sum(flees))
+        total_n_trials.append(sum(idx))
         percentage_list.append(100 * (1 - float(sum(flees))/sum(idx)))
-        n_mice.append(len(val))
+        n_mice.append(sum([int(np.any(df_ids == m)) for m in mouse_ids]))
 
     prc_flees_ih_ivc_7day = 100 - 100 * sum(data.dataframe['ih_ivc_7day']['is_flee']) / len(
         data.dataframe['ih_ivc_7day'])
     n_ih_ivc_7day_mice = len(data.mouse_ids['ih_ivc_7day'])
 
-    return t, percentage_list, n_mice, prc_flees_ih_ivc_7day, n_ih_ivc_7day_mice
+    return t, percentage_list, n_mice, prc_flees_ih_ivc_7day, n_ih_ivc_7day_mice, n_non_flees, total_n_trials
 
 
 def plot_fig_2b(fig=None, axis=None):
@@ -354,7 +359,7 @@ def plot_fig_2f(fig=None, axis=None):
 
     time_labels = ['7 min', '24 hrs', '72 hrs', '7 days', '8 days', '2 weeks']
 
-    t, percentage_list, n_mice, prc_flees_ih_ivc_7day, n_ih_ivc_7day_mice = fig_2f_data()
+    t, percentage_list, n_mice, prc_flees_ih_ivc_7day, n_ih_ivc_7day_mice, _, _ = fig_2f_data()
 
     plt.scatter(t, percentage_list, clip_on=False, facecolors='none', edgecolors=default_colors['lsie'])
 
@@ -414,28 +419,70 @@ def print_stats():
     _, ih_ivc_7day_vs_lsie_p_val = ranksums(lsie_response, ih_ivc_7day_response)
 
     print(f'LSIE baseline vs response: '
-          f'{np.nanmedian(lsie_baseline):.2f} '
-          f'vs {np.nanmedian(lsie_response):.2f},'
+          f'{np.nanmedian(lsie_baseline):.2f} (n={sum(~np.isnan(np.array(lsie_baseline)))}) '
+          f'vs {np.nanmedian(lsie_response):.2f} (n={sum(~np.isnan(np.array(lsie_response)))}) '
           f' p={lsie_baseline_vs_response_p_val:.2e}, Wilcoxon paired')
 
     print(f'IH IVC 7day baseline vs response: '
-          f'{np.nanmedian(ih_ivc_7day_baseline):.2f} '
-          f'vs {np.nanmean(ih_ivc_7day_response):.2f},'
+          f'{np.nanmedian(ih_ivc_7day_baseline):.2f} (n={sum(~np.isnan(np.array(ih_ivc_7day_baseline)))}) '
+          f'vs {np.nanmedian(ih_ivc_7day_response):.2f} (n={sum(~np.isnan(np.array(ih_ivc_7day_response)))}) '
           f' p={ih_ivc_7day_baseline_vs_response_p_val:.2e}, Wilcoxon paired')
 
     print(f'LSIE response vs IH IVC 7day response: '
-          f'{np.nanmedian(lsie_response):.2f} '
-          f'vs {np.nanmedian(ih_ivc_7day_response):.2f},'
+          f'{np.nanmedian(lsie_response):.2f} (n={sum(~np.isnan(np.array(lsie_response)))}) '
+          f'vs {np.nanmedian(ih_ivc_7day_response):.2f} (n={sum(~np.isnan(np.array(ih_ivc_7day_response)))}) '
           f' p={ih_ivc_7day_vs_lsie_p_val:.2e}, Wilcoxon paired')
 
-    _, n_freezes, total_n_trials = fig_2e_data()
+    n_flees_to_each_loom, n_freezes, total_n_trials = fig_2e_data()
 
-    _, p = fisher_exact([[n_freezes[0], n_freezes[1]],
-                         [total_n_trials[0]-n_freezes[0], total_n_trials[1]-n_freezes[1]]])
+    n_non_escapes = {'ih_ivc_7day': total_n_trials['ih_ivc_7day'] - sum(n_flees_to_each_loom['ih_ivc_7day']),
+                     'lsie': total_n_trials['lsie'] - sum(n_flees_to_each_loom['lsie'])}
 
-    print(f'LSIE n freezes ({n_freezes[1]:.0f}/{total_n_trials[1]:.0f}) vs '
-          f'IH IVC 7 day ({n_freezes[0]:.0f}/{total_n_trials[0]:.0f}), '
+    _, p = fisher_exact([[n_non_escapes['ih_ivc_7day'], n_non_escapes['lsie']],
+                         [total_n_trials['ih_ivc_7day'] - n_non_escapes['ih_ivc_7day'],
+                          total_n_trials['lsie'] - n_non_escapes['lsie']]])
+
+    print(f'LSIE n non escapes ({n_non_escapes["lsie"]:.0f}/{total_n_trials["lsie"]:.0f})'
+          f'({100*n_non_escapes["lsie"]/total_n_trials["lsie"]:.1f}%) vs '
+          f'IH IVC 7 day ({n_non_escapes["ih_ivc_7day"]:.0f}/{total_n_trials["ih_ivc_7day"]:.0f}), '
+          f'({100*n_non_escapes["ih_ivc_7day"]/total_n_trials["ih_ivc_7day"]:.1f}%)'
           f'p={p:.2e}')
+
+    _, p = fisher_exact([[n_freezes['ih_ivc_7day'], n_freezes['lsie']],
+                         [total_n_trials['ih_ivc_7day']-n_freezes['ih_ivc_7day'],
+                          total_n_trials['lsie']-n_freezes['lsie']]])
+
+    print(f'LSIE n freezes ({n_freezes["lsie"]:.0f}/{total_n_trials["lsie"]:.0f}) vs '
+          f'IH IVC 7 day ({n_freezes["ih_ivc_7day"]:.0f}/{total_n_trials["ih_ivc_7day"]:.0f}), '
+          f'p={p:.2e}')
+
+    lsie_delta = np.abs(np.array(hd_data.post_loom_angle['lsie']) -
+                        np.array(hd_data.pre_loom_angle['lsie']))
+    naive_delta = np.abs(np.array(hd_data.post_loom_angle['naive']) -
+                         np.array(hd_data.pre_loom_angle['naive']))
+
+    lsie_med_delta = np.median(lsie_delta)
+    naive_med_delta = np.median(naive_delta)
+
+    print(f'median absolute change in heading direction: '
+          f'LSIE: {lsie_med_delta:.1f} degrees (n={len(lsie_delta)}) vs '
+          f'naive = {naive_med_delta:.1f} degrees (n={len(naive_delta)}),'
+          'p < 0.001, Kuiper\'s test')
+
+    t, _, _, _, _, n_non_lsie_flees, total_n_lsie_trials = fig_2f_data()
+
+    for i in range(len(n_non_lsie_flees)):
+
+        _, p = fisher_exact([[n_non_escapes['ih_ivc_7day'], n_non_lsie_flees[i]],
+                            [total_n_trials['ih_ivc_7day'] - n_non_escapes['ih_ivc_7day'],
+                             total_n_lsie_trials[i] - n_non_lsie_flees[i]]])
+
+        print(f'post-LSIE test time {t[i]/60}: {n_non_lsie_flees[i]}/{total_n_lsie_trials[i]} vs'
+              f' {n_non_escapes["ih_ivc_7day"]}/{total_n_trials["ih_ivc_7day"]}'
+              f' p={p:1e}, Fisher')
+
+
+
 
 
 def main():
@@ -479,7 +526,7 @@ def main():
     plot_fig_2e(fig=h_fig, axis=axes_dict['e'])
     plot_fig_2f(fig=h_fig, axis=axes_dict['f'])
 
-    # print_stats()
+    print_stats()
 
     h_fig.savefig(str(save_dir / "figure_2.pdf"))
 

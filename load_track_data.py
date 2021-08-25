@@ -121,7 +121,8 @@ mouse_ids['lsie'] = ['CA73_4',
                      '1114188',
                      '1114189',
                      '1114307',
-                     '1114308']
+                     '1114308',
+                     'CA77_1']
 
 # social_housed_in_20
 mouse_ids['gh_enriched'] = ['CA408_4',
