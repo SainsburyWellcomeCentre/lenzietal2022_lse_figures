@@ -126,18 +126,22 @@ def fig_1h_data():
 
 def fig_1j_data():
 
-    percentage_list = []
+    group_ids = ['ih_ivc_7day', 'gh_enriched']
 
-    dataframe = data.dataframe['ih_ivc_7day']
-    total_n_trials = dataframe.shape[0]
+    percentage_lists = {k: [] for k in group_ids}
 
-    for i in range(1, 6):
-        fraction_on_this_loom = sum(dataframe['last_loom'] == i)/total_n_trials
-        percentage_list.append(100 * fraction_on_this_loom)
+    for group_id in group_ids:
 
-    percentage_list.append(100 * (total_n_trials - sum(dataframe['is_flee'])) / total_n_trials)
+        dataframe = data.dataframe[group_id]
+        total_n_trials = dataframe.shape[0]
 
-    return percentage_list
+        for i in range(1, 6):
+            fraction_on_this_loom = sum(dataframe['last_loom'] == i) / total_n_trials
+            percentage_lists[group_id].append(100 * fraction_on_this_loom)
+
+        percentage_lists[group_id].append(100 * (total_n_trials - sum(dataframe['is_flee'])) / total_n_trials)
+
+    return percentage_lists
 
 
 def fig_1k_data():
@@ -403,16 +407,24 @@ def plot_fig_1j(fig=None, axis=None):
 
     percentage_list = fig_1j_data()
 
-    x_limits = [-0.5, 7.5]
+    x_limits = [-1, 7.5]
     y_limits = [0, 60]
     y_tick_space = 20
+    bar_width = 0.3
 
-    for j in range(len(percentage_list[:-1])):
-        if percentage_list[j] != 0:
-            plt.bar(j, percentage_list[j],
-                    width=0.8, facecolor='none', edgecolor=default_colors['ih_ivc_7day'], clip_on=False)
-    plt.bar(len(percentage_list), percentage_list[-1],
-            width=0.8, facecolor='none', edgecolor=default_colors['ih_ivc_7day'], clip_on=False)
+    for i, group_id in enumerate(percentage_list):
+        x = np.arange(len(percentage_list[group_id][:-1])) - bar_width + i * bar_width
+        if group_id == 'gh_enriched':
+            face_color = edge_color = default_colors[group_id]
+        elif group_id == 'ih_ivc_7day':
+            face_color = 'none'
+            edge_color = default_colors[group_id]
+        else:
+            return
+        plt.bar(x, percentage_list[group_id][:-1], width=bar_width,
+                facecolor=face_color, edgecolor=edge_color, clip_on=False)
+        plt.bar(len(percentage_list[group_id]) - bar_width + i * bar_width, percentage_list[group_id][-1],
+                width=bar_width, facecolor=face_color, edgecolor=edge_color, clip_on=False)
 
     ax.spines['bottom'].set_visible(False)
     plt.ylabel('% Escape Trials')
@@ -421,8 +433,21 @@ def plot_fig_1j(fig=None, axis=None):
     plt.xlim(x_limits)
 
     y_offset = x_axis_spots(ax, y_limits)
-    ax.text(len(percentage_list), y_offset, 'No\nescape',
+    ax.text(6, y_offset, 'No\nescape',
             horizontalalignment='center', verticalalignment='top', fontsize=8)
+
+    # legend
+    gh_offset = 50
+    ih_offset = 55
+    plt.fill([1, 1.7, 1.7, 1], [gh_offset, gh_offset, gh_offset+2.4, gh_offset+2.4],
+             facecolor=default_colors['gh_enriched'], edgecolor='none', clip_on=False)
+    plt.fill([1, 1.7, 1.7, 1], [ih_offset, ih_offset, ih_offset+2.4, ih_offset+2.4],
+             facecolor='none', edgecolor=default_colors['ih_ivc_7day'], clip_on=False)
+
+    ax.text(2, gh_offset+1.2, 'GH enriched', color=default_colors['gh_enriched'], fontsize=7,
+            horizontalalignment='left', verticalalignment='center', clip_on=False)
+    ax.text(2, ih_offset+1.2, 'IH IVC (7 day)', color=default_colors['ih_ivc_7day'], fontsize=7,
+            horizontalalignment='left', verticalalignment='center', clip_on=False)
 
 
 def plot_fig_1k(fig=None, axis=None):
