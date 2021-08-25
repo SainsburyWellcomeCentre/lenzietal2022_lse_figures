@@ -98,8 +98,6 @@ def fig_1g_data():
     p_val = np.zeros(shape=(n_groups, n_groups))
     for i in range(n_groups):
         for j in range(i + 1, n_groups):
-            print(speed_lists[i])
-            print(speed_lists[j])
             _, p_val[i, j] = ranksums(speed_lists[i], speed_lists[j])
 
     return speed_lists, p_val
@@ -110,12 +108,12 @@ def latency_data():
     group_ids = ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth', 'ih_ivc_7day']
     n_groups = len(group_ids)
 
-    dfs = [data.dataframe[k] for k in group_ids]
-
     latency_lists = []
-    for df in dfs:
-        flees = np.array(df['classified as flee'])
-        latency_lists.append(np.array(df['latency peak detect'])[flees])
+    for group_id in group_ids:
+        dataframe = data.dataframe[group_id]
+        flees = np.array(dataframe['is_flee'])
+        latencies = np.array(dataframe['latency'])
+        latency_lists.append(latencies[flees])
 
     # stats
     p_val = np.zeros(shape=(n_groups, n_groups))
@@ -589,6 +587,50 @@ def print_stats_fig_1g_and_h(lists, stats, axis_label):
                   f'p={p_str}, ranksum test')
 
 
+def print_stats():
+
+    group_ids = ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth', 'ih_ivc_7day']
+    n_flees, total_n_trials, p_val = fig_1f_data()
+
+    print('\n\n\nESCAPE RATE\n\n\n')
+    for i in range(len(n_flees)-1):
+        for j in range(i+1, len(n_flees)):
+            nice_p = nice_p_string(p_val[i, j])
+            print(f'{group_ids[i]}: {n_flees[i]:.0f} / {total_n_trials[i]:.0f} vs '
+                  f'{group_ids[j]}: {n_flees[j]:.0f} / {total_n_trials[j]:.0f} '
+                  f'p = {nice_p}')
+
+    latency_lists, p_val = latency_data()
+
+    print('\n\n\nLATENCY\n\n\n')
+    for i in range(len(latency_lists)-1):
+        for j in range(i+1, len(latency_lists)):
+            nice_p = nice_p_string(p_val[i, j])
+            print(f'{group_ids[i]}: {np.median(latency_lists[i]):.3f}s IQR={iqr(latency_lists[i]):.3f}s vs '
+                  f'{group_ids[j]}: {np.median(latency_lists[j]):.3f}s IQR={iqr(latency_lists[j]):.3f}s '
+                  f'p = {nice_p}')
+
+    speed_lists, p_val = fig_1g_data()
+
+    print('\n\n\nSPEED\n\n\n')
+    for i in range(len(speed_lists)-1):
+        for j in range(i+1, len(speed_lists)):
+            nice_p = nice_p_string(p_val[i, j])
+            print(f'{group_ids[i]}: {np.median(speed_lists[i]):.2f}cm/s IQR={iqr(speed_lists[i]):.2f}cm/s vs '
+                  f'{group_ids[j]}: {np.median(speed_lists[j]):.2f}cm/s IQR={iqr(speed_lists[j]):.2f}cm/s '
+                  f'p = {nice_p}')
+
+    robustness_lists, p_val = fig_1h_data()
+
+    print('\n\n\nROBUSTNESS\n\n\n')
+    for i in range(len(robustness_lists) - 1):
+        for j in range(i + 1, len(robustness_lists)):
+            nice_p = nice_p_string(p_val[i, j])
+            print(f'{group_ids[i]}: {np.median(robustness_lists[i]):.2f}a.u. IQR={iqr(robustness_lists[i]):.2f}a.u. vs '
+                  f'{group_ids[j]}: {np.median(robustness_lists[j]):.2f}a.u. IQR={iqr(robustness_lists[j]):.2f}a.u. '
+                  f'p = {nice_p}')
+
+
 def main():
 
     mpl.rcParams['pdf.fonttype'] = 42  # save text elements as text and not shapes
@@ -648,6 +690,8 @@ def main():
     plot_fig_1i(fig=h_fig, axis=axes_dict['i'])
     plot_fig_1j(fig=h_fig, axis=axes_dict['j'])
     plot_fig_1k(fig=h_fig, axis=axes_dict['k'])
+
+    print_stats()
 
     h_fig.savefig(f'{save_dir}\\figure_1.pdf')
     plt.show()

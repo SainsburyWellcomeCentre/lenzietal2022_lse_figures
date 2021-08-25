@@ -384,7 +384,7 @@ def plot_fig_2f(fig=None, axis=None):
                 horizontalalignment='center', verticalalignment='top', color=default_colors['lsie'])
 
 
-def print_stats_fig_2(data_obj):
+def print_stats():
 
     baseline_limits = [-1, 0]
     response_limits = [0, 1]
@@ -399,11 +399,14 @@ def print_stats_fig_2(data_obj):
         ii = np.argmax(np.abs(a))
         return a[ii]
 
-    lsie_baseline = [max_min(x[baseline_frames]) for x in data_obj.lsie_speeds]
-    lsie_response = [max_min(x[response_frames]) for x in data_obj.lsie_speeds]
+    lsie_speeds = data.dataframe['lsie'].speed
+    ih_ivc_7day_speeds = data.dataframe['ih_ivc_7day'].speed
 
-    ih_ivc_7day_baseline = [max_min(x[baseline_frames]) for x in data_obj.ih_ivc_7day_speeds]
-    ih_ivc_7day_response = [max_min(x[response_frames]) for x in data_obj.ih_ivc_7day_speeds]
+    lsie_baseline = [max_min(x[baseline_frames]) for x in lsie_speeds]
+    lsie_response = [max_min(x[response_frames]) for x in lsie_speeds]
+
+    ih_ivc_7day_baseline = [max_min(x[baseline_frames]) for x in ih_ivc_7day_speeds]
+    ih_ivc_7day_response = [max_min(x[response_frames]) for x in ih_ivc_7day_speeds]
 
     _, lsie_baseline_vs_response_p_val = wilcoxon(lsie_baseline, lsie_response)
     _, ih_ivc_7day_baseline_vs_response_p_val = wilcoxon(ih_ivc_7day_baseline, ih_ivc_7day_response)
@@ -476,7 +479,7 @@ def main():
     plot_fig_2e(fig=h_fig, axis=axes_dict['e'])
     plot_fig_2f(fig=h_fig, axis=axes_dict['f'])
 
-    # print_stats_fig_2(data)
+    print_stats()
 
     h_fig.savefig(f'{save_dir}\\figure_2.pdf')
 

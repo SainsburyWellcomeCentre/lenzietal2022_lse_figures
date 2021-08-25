@@ -85,9 +85,10 @@ for group_id in paths:
 
             HOUSE_START = 0.2
 
+            dlc_padding = 40
             if not os.path.isdir(transformed_df_path):
-                x_body, y_body = transform_raw_tracks(ids[group_id][i], df['body']['x'], df['body']['y'])
-                x_cricket, y_cricket = transform_raw_tracks(ids[group_id][i], df['cricket']['x'], df['cricket']['y'])
+                x_body, y_body = transform_raw_tracks(ids[group_id][i], df['body']['x']+dlc_padding, df['body']['y']+dlc_padding)
+                x_cricket, y_cricket = transform_raw_tracks(ids[group_id][i], df['cricket']['x']+dlc_padding, df['cricket']['y']+dlc_padding)
             else:
                 x_body = np.load(os.path.join(transformed_df_path, ids[group_id][i], 'x_body.npy'))
                 y_body = np.load(os.path.join(transformed_df_path, ids[group_id][i], 'y_body.npy'))
