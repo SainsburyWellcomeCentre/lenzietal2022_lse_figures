@@ -311,7 +311,7 @@ def plot_fig_1e(fig=None, axis=None):
     n_flees, total_n_trials, p_val = fig_1e_data()
 
     colors = [default_colors[x] for x in ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth']]
-    label_str = ['GH enriched', 'IH enriched', 'IH IVC']
+    label_str = ['GH enriched', 'IH enriched', 'IH IVC (1 mth)']
 
     n_flees = n_flees[:-1]
     total_n_trials = total_n_trials[:-1]
@@ -373,7 +373,7 @@ def plot_fig_1f(fig=None, axis=None):
     plt.xlim(x_limits)
 
     plt.xticks([0, 1, 2, 3])
-    plt.xlabel('# escape trials')
+    plt.xlabel('# escapes (/3 test trials)')
     # y_offset = x_axis_spots(ax, y_limits)
 
     # legend
@@ -401,13 +401,13 @@ def plot_fig_1g_and_h(axis_label, fig=None, axis=None):
         raise ValueError("axis_label must be 'speed' or 'robustness'")
 
     colors = [default_colors[x] for x in ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth']]
-    label_str = ['GH enriched', 'IH enriched', 'IH IVC']
+    label_str = ['GH enriched', 'IH enriched', 'IH IVC (1 mth)']
 
     lists = lists[:-1]
 
     for i, y in enumerate(lists):
         x_jitter = i - 0.2 + 0.4 * np.random.rand(len(y))
-        plt.scatter(x_jitter, y, s=scatterball_size(1), facecolor='none', edgecolor=colors[i], alpha=0.6)
+        plt.scatter(x_jitter, y, s=scatterball_size(1), facecolor='none', edgecolor=colors[i], alpha=0.6, clip_on=False)
         plt.plot([i - 0.3, i + 0.3], [np.median(y), np.median(y)], color='k', linewidth=1, solid_capstyle='butt')
 
     ax.spines['bottom'].set_visible(False)
@@ -514,7 +514,7 @@ def plot_fig_1j(fig=None, axis=None):
 
     ax.text(2, gh_offset+1.2, 'GH enriched', color=default_colors['gh_enriched'], fontsize=7,
             horizontalalignment='left', verticalalignment='center', clip_on=False)
-    ax.text(2, ih_offset+1.2, 'IH IVC (7 day)', color=default_colors['ih_ivc_7day'], fontsize=7,
+    ax.text(2, ih_offset+1.2, 'IH IVC (≤ 7 day)', color=default_colors['ih_ivc_7day'], fontsize=7,
             horizontalalignment='left', verticalalignment='center', clip_on=False)
 
 
@@ -574,7 +574,7 @@ def plot_fig_1k(fig=None, axis=None):
 
 def print_stats_fig_1f(n_flees, total_n_trials, stats):
 
-    label_str = ['GH enriched', 'IH enriched', 'IH IVC 1mth', 'IH IVC 7 day']
+    label_str = ['GH enriched', 'IH enriched', 'IH IVC (1mth)', 'IH IVC 7 day']
 
     for i in range(len(label_str)):
         for j in range(i+1, len(label_str)):
@@ -585,7 +585,7 @@ def print_stats_fig_1f(n_flees, total_n_trials, stats):
 
 def print_stats_fig_1g_and_h(lists, stats, axis_label):
 
-    label_str = ['GH enriched', 'IH enriched', 'IH IVC 1mth', 'IH IVC 7 day']
+    label_str = ['GH enriched', 'IH enriched', 'IH IVC (1mth)', 'IH IVC 7 day']
 
     if axis_label == 'speed':
         print('-----------------SPEED-----------------')
