@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from looming_spots.constants import TRACK_LENGTH
 
-from scipy.stats import fisher_exact, ranksums, iqr
+from scipy.stats import fisher_exact, ranksums, iqr, chisquare
 
 from looming_spots.db import loom_trial_group
 
@@ -70,21 +70,23 @@ def fig_1f_data():
     n_trials = 3
 
     percentage_lists = {k: np.zeros(n_trials+1) for k in group_ids}
+    count_lists = {k: np.zeros(n_trials+1) for k in group_ids}
+    n_mice = {k: [] for k in group_ids}
 
     for group_id in group_ids:
 
         dataframe = data.dataframe[group_id]
 
         mouse_ids = dataframe['mouse_id'].unique()
-        n_mice = len(mouse_ids)
+        n_mice[group_id] = len(mouse_ids)
 
         for mouse_id in mouse_ids:
             n_escapes, _ = n_flees_by_mouse(dataframe, mouse_id)
-            percentage_lists[group_id][n_escapes] += 1
+            count_lists[group_id][n_escapes] += 1
 
-        percentage_lists[group_id] = 100 * percentage_lists[group_id] / n_mice
+        percentage_lists[group_id] = 100 * count_lists[group_id] / n_mice[group_id]
 
-    return percentage_lists
+    return percentage_lists, count_lists, n_mice
 
 
 def fig_1g_data():
@@ -351,7 +353,7 @@ def plot_fig_1f(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
-    percentage_lists = fig_1f_data()
+    percentage_lists, _, _ = fig_1f_data()
 
     x_limits = [-0.5, 3.5]
     y_limits = [0, 100]
@@ -661,6 +663,12 @@ def print_stats():
             print(f'{group_ids[i]}: {np.median(robustness_lists[i]):.2f}a.u. IQR={iqr(robustness_lists[i]):.2f}a.u. vs '
                   f'{group_ids[j]}: {np.median(robustness_lists[j]):.2f}a.u. IQR={iqr(robustness_lists[j]):.2f}a.u. '
                   f'p = {nice_p}')
+
+    _, count_lists, n_mice = fig_1f_data()
+
+    for group_id in ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth']:
+        _, p = chisquare(count_lists[group_id])
+        print(f'Chi squared again even distribution, {group_id}: p = {p:.3f}')
 
 
 def main():
