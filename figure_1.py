@@ -668,7 +668,7 @@ def print_stats():
 
     for group_id in ['gh_enriched', 'ih_enriched', 'ih_ivc_1mth']:
         _, p = chisquare(count_lists[group_id])
-        print(f'Chi squared again even distribution, {group_id}: p = {p:.3f}')
+        print(f'Chi squared against even distribution (Fig. 1f), {group_id}: p = {p:.3f}')
 
 
 def main():
