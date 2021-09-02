@@ -2,7 +2,7 @@ import matplotlib as mpl
 import numpy as np
 import matplotlib.pyplot as plt
 
-from scipy.stats import fisher_exact
+from scipy.stats import fisher_exact, ranksums, iqr
 
 from shared import a4figure, \
     save_dir, \
@@ -44,7 +44,7 @@ def fig_3e_data():
 
     n_flees, total_n_trials, p_val = fig_3_bar_data(dfs)
 
-    return n_flees, total_n_trials, p_val
+    return n_flees, total_n_trials, p_val, group_ids
 
 
 def fig_3_bar_data(dfs):
@@ -103,7 +103,7 @@ def plot_fig_3e(fig=None, axis=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
 
-    n_flees, total_n_trials, p_val = fig_3e_data()
+    n_flees, total_n_trials, p_val, _ = fig_3e_data()
     colors = [default_colors['pre_test_immediate'], default_colors['pre_test_24hr'], default_colors['lsie']]
 
     plot_fig_3_bars(ax, n_flees, total_n_trials, p_val, colors, bars_empty=True)
@@ -177,6 +177,58 @@ def plot_fig_3_bars(ax, n_flees, total_n_trials, p_val, colors, bars_empty=False
                         verticalalignment='bottom', fontsize=8)
 
 
+def print_stats():
+
+    _, p = fisher_exact([[13, 11], [2, 1]])
+
+    print(f'AUDITORY: naive vs. LSIE: p = {p:.2f}')
+
+    n_flees, total_n_trials, p_val, group_ids = fig_3e_data()
+
+    print(f'{group_ids[0]}: {n_flees[0]}/{total_n_trials[0]} vs. '
+          f'{group_ids[2]}: {n_flees[2]}/{total_n_trials[2]} '
+          f'p = {p_val[0, 2]}')
+
+    print(f'{group_ids[1]}: {n_flees[1]}/{total_n_trials[1]} vs. '
+          f'{group_ids[2]}: {n_flees[2]}/{total_n_trials[2]} '
+          f'p = {p_val[1, 2]}')
+
+    # cricket statistics
+    initial_duration = 10  # minutes
+
+    def n_events_in_initial_period(group_id):
+        is_event_in_initial_period = \
+            [np.logical_and(x >= 0, x < initial_duration) for x in cricket_plotting_fcns.event_times[group_id]]
+        return [sum(x) for x in is_event_in_initial_period]
+
+    _, p = ranksums(n_events_in_initial_period('naive'), n_events_in_initial_period('lsie'))
+
+    print(f'median number of bouts in first {initial_duration} minutes for naive mice'
+          f' = {np.median(n_events_in_initial_period("naive"))} (IQR={iqr(n_events_in_initial_period("naive"))})'
+          f' (n = 5) vs. median for LSIE mice'
+          f' = {np.median(n_events_in_initial_period("lsie"))} (IQR={iqr(n_events_in_initial_period("lsie"))})'
+          f' (n = 6), p = {p:.2f}, Wilcoxon rank-sum test')
+
+    def n_retreats_in_initial_period(group_id):
+
+        event_times = cricket_plotting_fcns.event_times[group_id]
+        reaches_shelter = [np.array(x) for x in cricket_plotting_fcns.reaches_shelter[group_id]]
+
+        is_event_in_initial_period = [np.logical_and(x >= 0, x < initial_duration) for x in event_times]
+        n_retreats = []
+        for i in range(len(is_event_in_initial_period)):
+            n_retreats.append(sum(reaches_shelter[i][is_event_in_initial_period[i]]))
+        return n_retreats
+
+    _, p = ranksums(n_retreats_in_initial_period('naive'), n_retreats_in_initial_period('lsie'))
+
+    print(f'median number of retreats in first {initial_duration} minutes for naive mice'
+          f' = {np.median(n_retreats_in_initial_period("naive"))} (IQR={iqr(n_retreats_in_initial_period("naive"))})'
+          f' (n = 5) vs. median for LSIE mice'
+          f' = {np.median(n_retreats_in_initial_period("lsie"))} (IQR={iqr(n_retreats_in_initial_period("lsie"))})'
+          f' (n = 6), p = {p:.2f}, Wilcoxon rank-sum test')
+
+
 def main():
 
     mpl.rcParams['pdf.fonttype'] = 42  # save text elements as text and not shapes
@@ -226,6 +278,8 @@ def main():
     plot_fig_3b(fig=h_fig, axis=axes_dict['b'])
     plot_fig_3d(fig=h_fig, axis=axes_dict['d'])
     plot_fig_3e(fig=h_fig, axis=axes_dict['e'])
+
+    print_stats()
 
     h_fig.savefig(str(save_dir / "figure_3.pdf"))
 
