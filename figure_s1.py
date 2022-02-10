@@ -42,6 +42,9 @@ def fig_s1a_data():
         n_flees.append(sum(flees))
         total_n_trials.append(len(flees))
 
+    n_flees.append(sum(data.dataframe['ih_ivc_1mth']['is_flee']))
+    total_n_trials.append(len(data.dataframe['ih_ivc_1mth']))
+
     return n_flees, total_n_trials
 
 
@@ -89,12 +92,13 @@ def plot_fig_s1a(n_flees, total_n_trials, fig=None, axis=None):
 
     percentages = [100 * float(x) / y for x, y in zip(n_flees, total_n_trials)]
 
-    x = np.arange(2, 8)
-    plt.bar(x, percentages, width=0.8, facecolor='k')
+    x = np.arange(2, 9)
+    plt.bar(x[:-1], percentages[:-1], width=0.8, facecolor='none', edgecolor='k')
+    plt.bar(x[-1], percentages[-1], width=0.8, facecolor=default_colors['ih_ivc_1mth'])
 
     for i in range(len(percentages)):
         ax.text(2 + i, percentages[i]-3, f'{n_flees[i]}/{total_n_trials[i]}', horizontalalignment='center',
-                verticalalignment='top', color='w', fontsize=8, rotation=90)
+                verticalalignment='top', color='k', fontsize=8, rotation=90)
 
     plt.ylabel('Escape (%)')
     plt.xticks(x)

@@ -231,6 +231,12 @@ def robustness_of_mouse(df, mouse_id):
     return robustness
 
 
+def load_track_from_df(track):
+    t = np.array(track.strip('[]').split(' '))
+    t = np.array([float(x) for x in t if x != ''])
+    return t
+
+
 def track_plot_data(dataframe):
 
     flees = np.array(dataframe['is_flee'])
@@ -242,7 +248,7 @@ def track_plot_data(dataframe):
     linestyle = []
 
     for i, track in enumerate(dataframe['track']):
-
+        track = load_track_from_df(track)
         if not flees[i]:
 
             if freeze[i]:
@@ -265,9 +271,11 @@ def track_plot_data(dataframe):
     return t, tracks, linestyle
 
 
-def plot_tracks_general(t, tracks, linestyle, fig=None, axis=None):
+def plot_tracks_general(t, tracks, linestyle, fig=None, axis=None, color_override=None):
 
     ax, _ = create_panel_if_needed(fig, axis)
+
+    flee_color = color_override if color_override is not None else default_colors['flee']
 
     for i, track in enumerate(tracks):
         if linestyle[i] == 'no reaction':
@@ -277,7 +285,7 @@ def plot_tracks_general(t, tracks, linestyle, fig=None, axis=None):
 
     for i, track in enumerate(tracks):
         if linestyle[i] == 'escape':
-            plt.plot(t[i], track, color=default_colors['flee'], linewidth=0.8, alpha=0.5)
+            plt.plot(t[i], track, color=flee_color, linewidth=0.8, alpha=0.5)
 
 
 def nice_p_string(p_val):
