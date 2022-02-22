@@ -684,20 +684,22 @@ def main():
 
     h_fig = a4figure()
 
-
+    offset_y = 35
+    offset_x = 15
     # position of legend labels, 297 - X to be like Illustrator
-    labels = {'a': [20, 297 - 30, 0, 0],
-              'b': [20, 297 - 90, 0, 0],
-              'c': [108, 297 - 30, 0, 0],
-              'd': [108, 297 - 90, 0, 0],
-              'e': [108, 297 - 145, 0, 0],}
+    labels = {'a': [20 + offset_x, 297 - 30 - offset_y, 0, 0],
+              'b': [20 + offset_x, 297 - 90 - offset_y, 0, 0],
+              'c': [108 + offset_x, 297 - 30 - offset_y, 0, 0],
+              'd': [108 + offset_x, 297 - 90 - offset_y, 0, 0],
+              'e': [108 + offset_x, 297 - 145 - offset_y, 0, 0],
+              }
 
     axis_positions = {
-                      'b_upper': [37, 297 - 127, 62, 32],
-                      'b_lower': [37, 297 - 182, 62, 32],
-                      'c':       [122, 297 - 67, 32, 32],
-                      'd':       [122, 297 - 127, 32, 32],
-                      'e':       [122, 297 - 182, 32, 32],
+                      'b_upper': [37 + offset_x, 297 - 127 - offset_y, 62, 32],
+                      'b_lower': [37 + offset_x, 297 - 182- offset_y, 62, 32],
+                      'c':       [122 + offset_x, 297 - 67- offset_y, 32, 32],
+                      'd':       [122 + offset_x, 297 - 127- offset_y, 32, 32],
+                      'e':       [122 + offset_x, 297 - 182- offset_y, 32, 32],
     }
 
     # add the legend labels

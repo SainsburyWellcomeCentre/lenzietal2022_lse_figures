@@ -93,15 +93,19 @@ def plot_fig_s1a(n_flees, total_n_trials, fig=None, axis=None):
     percentages = [100 * float(x) / y for x, y in zip(n_flees, total_n_trials)]
 
     x = np.arange(2, 9)
+    x[-1] = 9
     plt.bar(x[:-1], percentages[:-1], width=0.8, facecolor='none', edgecolor='k')
     plt.bar(x[-1], percentages[-1], width=0.8, facecolor=default_colors['ih_ivc_1mth'])
 
-    for i in range(len(percentages)):
-        ax.text(2 + i, percentages[i]-3, f'{n_flees[i]}/{total_n_trials[i]}', horizontalalignment='center',
+    for i, (x_val, percent) in enumerate(zip(x, percentages)):
+        ax.text(x_val + 0.09, percent-3, f'{n_flees[i]}/{total_n_trials[i]}', horizontalalignment='center',
                 verticalalignment='top', color='k', fontsize=8, rotation=90)
 
     plt.ylabel('Escape (%)')
     plt.xticks(x)
+    xlabels = list(x[:-1])
+    xlabels.extend(['1 mth'])
+    ax.set_xticklabels(xlabels)
     plt.xlabel('Days Isolated')
 
 

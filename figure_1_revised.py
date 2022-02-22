@@ -480,7 +480,7 @@ def plot_fig_1j(fig=None, axis=None):
     x_limits = [-1, 7.5]
     y_limits = [0, 60]
     y_tick_space = 20
-    bar_width = 0.3
+    bar_width = 0.4
 
     for i, group_id in enumerate(percentage_list):
         x = np.arange(len(percentage_list[group_id][:-1])) - bar_width + i * bar_width
@@ -504,8 +504,8 @@ def plot_fig_1j(fig=None, axis=None):
     plt.yticks(np.arange(y_limits[0], y_limits[1] + 1, y_tick_space))
     plt.xlim(x_limits)
 
-    y_offset = x_axis_spots(ax, y_limits)
-    ax.text(6, y_offset, 'No\nescape',
+    y_offset = x_axis_spots(ax, y_limits, offset=0.2)
+    ax.text(5.75, y_offset, 'No\nescape',
             horizontalalignment='center', verticalalignment='top', fontsize=8)
 
     # legend
@@ -682,25 +682,26 @@ def main():
     mpl.rcParams['font.family'] = "sans-serif"
 
     h_fig = a4figure()
-
+    offset_y = 45
+    offset_x = 3
     # position of legend labels, 297 - X to be like Illustrator
-    labels = {'a': [20, 297 - 30, 0, 0],
-              'b': [50, 297 - 52, 0, 0],
-              'c': [20, 297 - 78, 0, 0],
-              'd': [108, 297 - 30, 0, 0],
-              'e': [20, 297 - 130, 0, 0],
-              'f': [85, 297 - 130, 0, 0],
-              'g': [142, 297 - 130, 0, 0]}
+    labels = {'a': [20+offset_x, 297 - 30 - offset_y, 0, 0],
+              'b': [50+offset_x, 297 - 52 - offset_y, 0, 0],
+              'c': [20+offset_x, 297 - 78 - offset_y, 0, 0],
+              'd': [108+offset_x, 297 - 30 - offset_y, 0, 0],
+              'e': [20+offset_x, 297 - 130 - offset_y, 0, 0],
+              'f': [85+offset_x, 297 - 130 - offset_y, 0, 0],
+              'g': [142+offset_x, 297 - 130 - offset_y, 0, 0]}
 
-    axis_positions = {'c': [37, 297 - 117, 62, 32],
-                      'e': [37, 297 - 162, 43, 32],
-                      'd_upper': [117, 297 - 67, 62, 32],
+    axis_positions = {'c': [37+offset_x, 297 - 117 - offset_y, 62, 32],
+                      'e': [37+offset_x, 297 - 162 - offset_y, 43, 32],
+                      'd_upper': [117+offset_x, 297 - 67 - offset_y, 62, 32],
                       #'f': [160, 297 - 67, 30, 32],
-                      'd_lower': [117, 297 - 117, 62, 32],
+                      'd_lower': [117+offset_x, 297 - 117 - offset_y, 62, 32],
                       #'h': [164, 297 - 1 30, 23, 32],
                       #'i': [117, 297 - 188, 62, 32],
-                      'f': [95, 297 - 162, 48, 32],
-                      'g': [159, 297 - 162, 23, 32]}
+                      'f': [95+offset_x, 297 - 162 - offset_y, 48, 32],
+                      'g': [159+offset_x, 297 - 162 - offset_y, 23, 32]}
 
     # add the legend labels
     add_figure_labels(h_fig, labels)

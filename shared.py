@@ -171,7 +171,7 @@ def format_general_axis(ax):
         item.set_fontsize(8)
 
 
-def x_axis_spots(ax, y_limits):
+def x_axis_spots(ax, y_limits, offset=0):
 
     plt.sca(ax)
 
@@ -182,9 +182,9 @@ def x_axis_spots(ax, y_limits):
     y_offset = y_limits[0] - (y_limits[1] - y_limits[0]) / 6
     y_offset2 = y_limits[0] - 2 * (y_limits[1] - y_limits[0]) / 6
 
-    [plt.scatter(x, y_offset, s=scatterball_size(3), facecolor='k', clip_on=False) for x in range(n_spots)]
+    [plt.scatter(x-offset, y_offset, s=scatterball_size(3), facecolor='k', clip_on=False) for x in range(n_spots)]
 
-    [ax.text(x, y_offset, str(x + 1), color='w', horizontalalignment='center', verticalalignment='center',
+    [ax.text(x-offset, y_offset, str(x + 1), color='w', horizontalalignment='center', verticalalignment='center',
              fontsize=8, fontweight='bold') for x in range(n_spots)]
 
     ax.text((n_spots-1)/2, y_offset2, 'Last looming spot\npreceding escape',
