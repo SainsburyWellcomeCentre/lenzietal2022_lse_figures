@@ -1,4 +1,4 @@
-`This repo contains code to replicate the figures appearing in:
+This repo contains code to replicate the figures appearing in:
 
 **Lenzi et al. (2022) *Threat history controls escape behaviour in mice***
 
