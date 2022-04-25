@@ -2,7 +2,7 @@ This repo contains code to replicate the figures appearing in:
 
 **Lenzi et al. (2022) *Threat history controls escape behaviour in mice***
 
-The code relies on preprocessed data (doi: 10.17632/mcht8r94yv.1) that were generated using the [`looming_spots`](https://github.com/stephenlenzi/looming_spots) repo (doi: )
+The code relies on preprocessed data (doi: 10.17632/mcht8r94yv.1) that were generated using the [`looming_spots`](https://github.com/SainsburyWellcomeCentre/looming_spots.git) repo (doi: 10.5281/zenodo.6483482)
 
 The path to the data `DATA_DIRECTORY` can be set in `shared.py`. 
 
