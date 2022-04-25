@@ -1,8 +1,8 @@
-This repo contains code to replicate the figures appearing in:
+`This repo contains code to replicate the figures appearing in:
 
-**Lenzi et al. (202x) *Ethological factors influencing escape behaviour and its adaptive control***
+**Lenzi et al. (2022) *Threat history controls escape behaviour in mice***
 
-The code relies on the [`looming_spots`](https://github.com/stephenlenzi/looming_spots) repo (commit: `xxxx`; annotated tag: `lsie_paper`)
+The code relies on the [`looming_spots`](https://github.com/stephenlenzi/looming_spots) repo (commit: `xxxx`; annotated tag: `lse_paper`)
 
 The paths to the data are set in `path_config.py`.  The paths are:
 
